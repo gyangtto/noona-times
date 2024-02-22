@@ -1,0 +1,185 @@
+@import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css);
+
+.nanummyeongjo * {
+  font-family: 'Nanum Myeongjo', serif;
+}
+
+body {
+  font-family: 'Nanum Myeongjo', serif;
+  background-color: #eee;
+  word-break: keep-all;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 0;
+  height: 100%;
+
+  z-index: 1;
+  background-color: grey;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.side-menu-list button {
+  width: 120px;
+  margin: 5px;
+  border: none;
+  background: none;
+}
+
+.side-menu .closebtn {
+  position: absolute;
+  top: 0;
+  right: 1%;
+
+  font-size: 18px;
+  font-weight: 900;
+
+  border: none;
+  background: none;
+}
+
+.side-menu-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.side-menu-list button:hover {
+  opacity: .5;
+  border-radius: 0px;
+}
+
+
+#mobile-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+#mobile-gnb-btn {
+  visibility: hidden;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#mobile-gnb-btn:hover {
+  opacity: .5;
+}
+
+
+@media screen and (max-width: 960px) {
+  #mobile-gnb-btn {
+    visibility: visible;
+  }
+}
+
+.search-area {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
+#search-icon {
+  font-size: 24px;
+  /* font-weight: 400; */
+  cursor: pointer;
+  margin-right: 1%;  
+  }
+
+#search-icon:hover {
+  opacity: .5;
+  border-radius: 100%;
+}
+
+#search-input{
+  outline: none;
+  border: none;
+  background: none;
+
+  width: 160px;
+  border-bottom: 1px solid #000;
+}
+
+@media screen and (max-width: 340px) {
+  #search-input {
+    width: 100px;
+  }
+}
+
+#input-area{
+  display: none;
+
+  transform: translateX(100%);
+  transition: transform 0.5s ease;
+}
+
+#search-btn {
+  outline: none;
+  border: none;
+  background: none;
+}
+
+.head-line {
+  margin-top: 1em;
+  display: flex;
+  justify-content: center;
+}
+
+.head-line svg {
+  width: 430px;
+}
+
+.menus {
+  margin-top: 1em;
+  padding: 1em;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid #ebebeb;
+  border-bottom: 4px double #000;
+}
+
+@media screen and (max-width: 960px) {
+  .menus {
+    display: none;
+  }
+}
+
+.menus button {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.menus button:hover {
+  opacity: .5;
+}
+
+/* .news-img-size {
+  max-width: 100%;
+  max-height: 250px;
+} */
+/* img-fluid로 대체 */
+
+.news {
+  padding: 1em;
+  border-bottom: 2px solid #000;
+  word-break: keep-all;
+}
+
+.content-title {
+  font-size: 24px;
+  font-weight: 800;
+}
