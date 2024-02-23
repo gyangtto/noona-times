@@ -1,9 +1,16 @@
 const API_KEY = `59db89f3fab8455081d13257e11ce5d2`;
 let newsList = [];
+const inputArea = document.getElementById('input-area');
+const searchIcon = document.getElementById('search-icon');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn'); // 검색 버튼 추가
+
 const menus = document.querySelectorAll('.menus button');
 // console.log('button :', menus); // 버튼들 확인
 const mobileMenus = document.querySelectorAll('#menu-list button')
 console.log('button :', mobileMenus); // 버튼들 확인
+
+let url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`)
 
 // 모바일 햄버거 메뉴열기
 const openNav = () => {
@@ -19,10 +26,7 @@ mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCat
 
 menus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCategory(evt)));
 
-const getLatesNews = async () => {
-  const url = new URL(
-    `https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`
-  );
+const getNews = async () => {
   const reponse = await fetch(url);
   console.log('rrr', reponse);
   const data = await reponse.json();
@@ -30,58 +34,81 @@ const getLatesNews = async () => {
   console.log('ddd', newsList);
 
   render();
+}
+
+const getLatesNews = async () => {
+  url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`);
+  getNews();
 };
 
 const getNewsByCategory = async (evt) => {
   const category = evt.target.textContent.toLowerCase();
   console.log('category', category); // 카테고리 클릭 이벤트 확인
-  const url = new URL(
+  url = new URL(
     `https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${API_KEY}`
   );
-
-  const reponse = await fetch(url);;
-  console.log('rrr', reponse);
-  const data = await reponse.json();
-  newsList = data.articles;
-  console.log('ddd', data);
-
-  render();
+  getNews();
 };
 
+// 검색 돋보기 버튼을 누르면 -> search에 display 이벤트 처리
 const openSearchBox = () => {
-  let inputArea = document.getElementById('input-area');
-
   if (inputArea.style.display === 'flex') {
     inputArea.style.display = 'none';
   } else {
     inputArea.style.display = 'flex';
-    document.getElementById('search-icon').style.display = 'none';
-    document.getElementById('search-input').focus()
+    searchInput.focus();
+    searchInput.value = '';
+    searchIcon.style.display = 'none';
+
   }
 };
 
-// #search-input에서 포커스가 해제될 때 이벤트 처리
-document.getElementById('search-input').addEventListener('blur', () => {
-  let inputArea = document.getElementById('input-area');
-  // #search-input이 포커스를 잃으면 input 영역을 숨기고 mobile-gnb-btn을 보이게 함
-  inputArea.style.display = 'none';
-  document.getElementById('search-icon').style.display = 'block';
+// 검색 입력창에 엔터 키 이벤트 추가
+searchInput.addEventListener('keyup', (event) => {
+  if (event.key === 'Enter') {
+    // 엔터 키를 누르면 검색 실행
+    handleSearch();
+  }
 });
 
-const getNewsByKeyword = async () => {
-  const keyword = document.getElementById('search-input').value;
-  console.log('keyword', keyword);
+// 검색 버튼 클릭 이벤트 추가
+searchBtn.addEventListener('click', () => {
+  // 검색 버튼을 누르면 검색 실행
+  handleSearch();
+});
 
-  const url = new URL(
+// ESC 키를 눌렀을 때 검색창 닫기
+document.addEventListener('keyup', (event) => {
+  if (event.key === 'Escape') {
+    inputArea.style.display = 'none';
+    searchIcon.style.display = 'block';
+  }
+});
+
+// #search-input에서 포커스가 해제될 때 이벤트 처리
+searchInput.addEventListener('blur', () => {
+  setTimeout (() => {
+    // #search-input이 포커스를 잃으면 input 영역을 숨기고 mobile-gnb-btn을 보이게 함
+  inputArea.style.display = 'none';
+  searchIcon.style.display = 'block';
+  },600)
+});
+
+
+// 키워드로 뉴스 가져오기
+const getNewsByKeyword = async () => {
+  const keyword = searchInput.value;
+  console.log('keyword', keyword);
+  url = new URL(
     `https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${API_KEY}`
   );
-  const reponse = await fetch(url);
-  console.log('rrr', reponse);
-  const data = await reponse.json();
-  newsList = data.articles;
-  console.log('ddd', newsList);
+  getNews();
+};
 
-  render();
+// handleSearch() 함수 추가
+const handleSearch = () => {
+  // 검색 이벤트를 통합적으로 처리
+  getNewsByKeyword();
 };
 
 const render = () => {

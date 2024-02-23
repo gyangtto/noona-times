@@ -111,6 +111,14 @@ body {
   border-bottom: 1px solid #000;
 }
 
+#search-input:focus{
+  outline: none;
+  border: none;
+  background: none;
+  
+  border-bottom: 1px solid #000;
+}
+
 @media screen and (max-width: 340px) {
   #search-input {
     width: 100px;
