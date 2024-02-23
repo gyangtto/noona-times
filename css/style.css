@@ -6,8 +6,22 @@
 
 body {
   font-family: 'Nanum Myeongjo', serif;
+  font-size: 14px;
   background-color: #eee;
   word-break: keep-all;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+input:autofill,
+input:autofill:hover,
+input:autofill:focus,
+input:autofill:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .side-menu {
@@ -111,10 +125,11 @@ body {
   border-bottom: 1px solid #000;
 }
 
+#search-input:active,
 #search-input:focus{
   outline: none;
   border: none;
-  background: none;
+  background: transparent;
   
   border-bottom: 1px solid #000;
 }
@@ -190,4 +205,8 @@ body {
 .content-title {
   font-size: 24px;
   font-weight: 800;
+}
+
+.page-item{
+  cursor: pointer;
 }

@@ -12,6 +12,14 @@ console.log('button :', mobileMenus); // 버튼들 확인
 
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`)
 
+// 페이지네이션 값 정하기
+let totalResults = 0; // 기본값 = 0; 전역 변수 선언
+// 임의적으로 정해줄 수 있음
+let page = 1;
+const pageSize = 10; // 고정 값
+const groupSize = 5; // 고정 값
+// 임의적으로 정해줄 수 있음
+
 // 모바일 햄버거 메뉴열기
 const openNav = () => {
   document.getElementById("mySidenav").style.width = "250px";
@@ -27,13 +35,33 @@ mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCat
 menus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCategory(evt)));
 
 const getNews = async () => {
-  const reponse = await fetch(url);
-  console.log('rrr', reponse);
-  const data = await reponse.json();
-  newsList = data.articles;
-  console.log('ddd', newsList);
+  try {
+    url.searchParams.set('page', page); // => &page=page
+    url.searchParams.set('pageSize', pageSize); // => &pageSize=pageSize
+    // url 뒤에다 붙여줄 수 있는 함수 = searchParams
 
-  render();
+    // fetch 전 세팅 후 fetch
+
+    const response = await fetch(url);
+    // console.log('rrr', reponse);
+    const data = await response.json();
+    if (response.status === 200) { // 정상일 경우 렌더링
+      if (data.articles.length === 0) { // 정상이지만 검색 후 article 갯수가 0개 일 때
+        throw new Error(`현재 검색하신 기사의 갯수는 0개 입니다.`);
+      }
+      newsList = data.articles;
+      totalResults = data.totalResults
+      console.log('ddd', newsList); // 데이터 정상 여부 확인
+      render();
+      paginationRender();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    // console.log('error', error.message); // 트라이캐치 함수가 정상여부 확인
+    errorRender(error.message);
+  };
+
 }
 
 const getLatesNews = async () => {
@@ -56,10 +84,9 @@ const openSearchBox = () => {
     inputArea.style.display = 'none';
   } else {
     inputArea.style.display = 'flex';
+    searchIcon.style.display = 'none';
     searchInput.focus();
     searchInput.value = '';
-    searchIcon.style.display = 'none';
-
   }
 };
 
@@ -87,11 +114,11 @@ document.addEventListener('keyup', (event) => {
 
 // #search-input에서 포커스가 해제될 때 이벤트 처리
 searchInput.addEventListener('blur', () => {
-  setTimeout (() => {
+  setTimeout(() => {
     // #search-input이 포커스를 잃으면 input 영역을 숨기고 mobile-gnb-btn을 보이게 함
-  inputArea.style.display = 'none';
-  searchIcon.style.display = 'block';
-  },600)
+    inputArea.style.display = 'none';
+    searchIcon.style.display = 'block';
+  }, 600)
 });
 
 
@@ -140,6 +167,67 @@ const render = () => {
   // console.log('html', newsHTML); // html 확인
 
   document.getElementById('news-board').innerHTML = newsHTML;
+};
+
+const errorRender = (errorMessage) => {
+  const errorHTML = `
+  <div class="alert alert-danger text-center" role="alert">
+  ${errorMessage}
+</div>`;
+
+  document.getElementById('news-board').innerHTML = errorHTML;
+};
+
+const paginationRender = () => {
+  // totalResults
+  // let totalResults = 0; // 기본값 = 0; 전역 변수 선언
+  // 임의적으로 정해줄 수 있음
+  // page
+  // let page = 1;
+  // pageSize
+  // const pageSize = 10; // 고정 값
+  // groupSize
+  // const groupSize = 5; // 고정 값
+  // 임의적으로 정해줄 수 있음
+  // totalapages
+  const totalPages = Math.ceil(totalResults / pageSize);
+  // pageGroup
+  const pageGroup = Math.ceil(page / groupSize);
+  // lastPage
+  let lastPage = pageGroup * groupSize;
+  // 마지막페이지가 그룹사이즈보다 작을 경우 -> lastpage = totalpage
+  if (lastPage > totalPages) {
+    lastPage = totalPages;
+  }
+  // firstPage
+  const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 첫번째 페이지그룹이 <=0 일 경우
+
+  // first ~ last Page 그려주기
+  let paginationHTML = `<li class="page-item" onclick="moveToPage(${page - 1})"><a class="page-link">prev</a></li>`
+  for (let i = firstPage; i <= lastPage; i++) {
+    // active 상태 추가
+    paginationHTML += `<li class="page-item ${i === page ? 'active' : ''} onclick='moveToPage(${i})'"><a class="page-link">${i}</a></li>`
+  }
+  paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})"><a class="page-link">next</a></li>`;
+  document.querySelector('.pagination').innerHTML = paginationHTML;
+
+  //   <div arialabel='Page navigation exmple'>
+  //   <ul class='pagination'>
+  //   <li class="page-item"><a href="#" class="page-link">prev</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">1</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">2</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">3</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">4</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">5</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">next</a></li>
+  //   </ul>
+  // </div>
+}
+
+const moveToPage = (pageNum) => {
+  console.log('movetopage', pageNum);
+  page = pageNum;
+  getNews();
 }
 
 getLatesNews();
