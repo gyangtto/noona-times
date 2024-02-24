@@ -178,6 +178,7 @@ const errorRender = (errorMessage) => {
   document.getElementById('news-board').innerHTML = errorHTML;
 };
 
+// pagination 구성
 const paginationRender = () => {
   // totalResults
   // let totalResults = 0; // 기본값 = 0; 전역 변수 선언
